@@ -15,7 +15,8 @@ Open http://localhost:8080. You can also open `index.html` directly.
 ## Included
 
 - A software-focused introduction, company story, and engineering services.
-- Eight projects: Elevator Maintenance / Signal Plus, Pazaro, Wedding Planner, Nightlife / Kadevecer, Mishel Trajkovski, Kamin Kama, Mladi Shampioni, and Milenium Kom.
+- Nine projects: Elevator Maintenance / Signal Plus, Pazaro, Wedding Planner, Nightlife / Kadevecer, Subscriptions & Tickets, Mishel Trajkovski, Kamin Kama, Mladi Shampioni, and Milenium Kom.
+- Subscriptions & Tickets is a Python/Tkinter desktop app with SQLite for a local pool, covering member records, monthly and annual subscriptions, ticket validity, and revenue reporting.
 - Project category filters and keyboard-accessible detail dialogs.
 - AWS experience covering EC2, S3, ECR, IAM, and SNS, alongside Docker and Terraform.
 - Responsive mobile navigation, reduced-motion support, and readable content without JavaScript.
@@ -35,7 +36,7 @@ The form validates the visitor’s entries and opens their email application wit
 
 Product previews are illustrative compositions, not live dashboards or usage metrics. The maintenance preview uses sample values from the Signal Plus reference website.
 
-Known public URLs are configured for Signal Plus, Wedding Planner, Kadevecer, Kamin Kama, and Milenium Kom. Pazaro, Mishel Trajkovski, and Mladi Shampioni intentionally have no public URL until their correct production addresses are supplied; their detail panels work normally. Add `url` to the corresponding entry in `projects` in `assets/main.js` when available.
+Known public URLs are configured for Signal Plus, Wedding Planner, Kadevecer, Kamin Kama, and Milenium Kom. Pazaro, Mishel Trajkovski, and Mladi Shampioni intentionally have no public URL until their correct production addresses are supplied; their detail panels work normally. Subscriptions & Tickets is a desktop app with no public website or download link. Add `url` to the corresponding entry in `projects` in `assets/main.js` when available.
 
 ## Publish
 

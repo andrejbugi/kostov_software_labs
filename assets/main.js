@@ -55,6 +55,18 @@ const projects = {
     tags: ["Ruby on Rails", "PostgreSQL", "AWS S3", "AI integration"],
     url: "https://kadevecer.online",
   },
+  pool: {
+    title: "Subscriptions & Tickets",
+    category: "Desktop application / Pool Management",
+    description:
+      "A desktop application built for a local pool to simplify subscription and ticket management. Staff can look up members, manage monthly and annual passes, and review revenue from one place.",
+    features: [
+      "Member registration, editing, search, and ticket history",
+      "Monthly and annual subscription passes with automatic validity calculation",
+      "Revenue reports, ticket sales, and membership statistics",
+    ],
+    tags: ["Python", "Tkinter", "SQLite", "Windows desktop"],
+  },
   mishel: {
     title: "Mishel Trajkovski",
     category: "Website / Music & Culture",
