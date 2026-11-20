@@ -19,7 +19,7 @@ Open http://localhost:8080. You can also open `index.html` directly.
 - Subscriptions & Tickets is a Python/Tkinter desktop app with SQLite for a local pool, covering member records, monthly and annual subscriptions, ticket validity, and revenue reporting.
 - Project category filters and keyboard-accessible detail dialogs.
 - AWS experience covering EC2, S3, ECR, IAM, and SNS, alongside Docker and Terraform.
-- Responsive mobile navigation, reduced-motion support, and readable content without JavaScript.
+- Responsive layouts, custom hero artwork, and entrance and interaction motion that respects the reduced-motion preference. The content and navigation work without JavaScript.
 - An email draft form addressed to **info@kostovsoftware.com**, plus a direct email link.
 
 ## Contact behavior
@@ -31,7 +31,7 @@ The form validates the visitor’s entries and opens their email application wit
 - `index.html`: visible copy, project cards, navigation, metadata, and contact address.
 - `assets/style.css`: colors, layout, typography, illustrations, and responsive styles.
 - `assets/main.js`: project details, verified source-provided project URLs, filtering, dialogs, navigation, and the form’s `CONTACT_EMAIL`.
-- `assets/images/`: copied imagery from the existing Mishel Trajkovski, Kamin Kama, and Mladi Shampioni projects.
+- `assets/images/`: the studio’s hero artwork and images from the Mishel Trajkovski, Kamin Kama, and Mladi Shampioni projects.
 - `assets/favicon.svg`: the studio’s initial mark.
 
 Product previews are illustrative compositions, not live dashboards or usage metrics. The maintenance preview uses sample values from the Signal Plus reference website.

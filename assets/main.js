@@ -150,24 +150,124 @@ document.addEventListener("keydown", (event) => {
     menuButton.focus();
   }
 });
-window.matchMedia("(min-width: 601px)").addEventListener("change", closeMenu);
+window.matchMedia("(width > 680px)").addEventListener("change", closeMenu);
+
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const pointerMotion = window.matchMedia(
+  "(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine)",
+);
+const heroArt = document.querySelector(".hero-art");
+function resetArtPosition() {
+  heroArt.style.removeProperty("--art-x");
+  heroArt.style.removeProperty("--art-y");
+}
+heroArt.addEventListener("pointermove", (event) => {
+  if (!pointerMotion.matches || event.pointerType !== "mouse") return;
+
+  const bounds = heroArt.getBoundingClientRect();
+  const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+  const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+  heroArt.style.setProperty("--art-x", `${x * 12}px`);
+  heroArt.style.setProperty("--art-y", `${y * 12}px`);
+});
+heroArt.addEventListener("pointerleave", resetArtPosition);
+pointerMotion.addEventListener("change", resetArtPosition);
+
+const entrances = new Map();
+function animateEntrance(element, delay = 0, x = 0, y = 14) {
+  if (reducedMotion.matches || !element.animate) return;
+
+  entrances.get(element)?.cancel();
+  const animation = element.animate(
+    [
+      { opacity: 0.65, transform: `translate(${x}px, ${y}px)` },
+      { opacity: 1, transform: "translate(0, 0)" },
+    ],
+    {
+      duration: 420,
+      delay,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "backwards",
+    },
+  );
+  entrances.set(element, animation);
+  animation.onfinish = animation.oncancel = () => {
+    if (entrances.get(element) === animation) entrances.delete(element);
+  };
+}
+reducedMotion.addEventListener("change", () => {
+  if (reducedMotion.matches) {
+    entrances.forEach((animation) => animation.cancel());
+    entrances.clear();
+  }
+});
+
+const reveal =
+  "IntersectionObserver" in window
+    ? new IntersectionObserver(
+        (entries, observer) => {
+          let delay = 0;
+          for (const { target, isIntersecting } of entries) {
+            if (!isIntersecting || target.hidden) continue;
+
+            observer.unobserve(target);
+            animateEntrance(target, delay);
+            delay = Math.min(delay + 45, 135);
+          }
+        },
+        { threshold: 0.12 },
+      )
+    : null;
+document
+  .querySelectorAll(
+    ".section-heading, .project-card, .service, .cloud-strip, .about-grid > div",
+  )
+  .forEach((element) => reveal?.observe(element));
 
 const cards = [...document.querySelectorAll(".project-card")];
-document.querySelectorAll("[data-filter]").forEach((button) => {
+const filters = [...document.querySelectorAll("[data-filter]")];
+const workCount = document.querySelector(".work-count");
+filters.forEach((button) => {
   button.addEventListener("click", () => {
-    document.querySelectorAll("[data-filter]").forEach((filter) => {
+    if (button.getAttribute("aria-pressed") === "true") return;
+
+    const previousPositions = new Map();
+    if (!reducedMotion.matches) {
+      for (const card of cards) {
+        if (!card.hidden)
+          previousPositions.set(card, card.getBoundingClientRect());
+      }
+    }
+
+    filters.forEach((filter) => {
       const active = filter === button;
       filter.classList.toggle("active", active);
       filter.setAttribute("aria-pressed", String(active));
     });
-    cards.forEach((card) => {
-      card.hidden =
-        button.dataset.filter !== "all" &&
-        card.dataset.category !== button.dataset.filter;
-    });
-    const count = cards.filter((card) => !card.hidden).length;
-    document.querySelector(".work-count").textContent =
-      `${count} projects / endless possibilities`;
+    const category = button.dataset.filter;
+    for (const card of cards) {
+      entrances.get(card)?.cancel();
+      card.hidden = category !== "all" && card.dataset.category !== category;
+    }
+
+    const visibleCards = cards.filter((card) => !card.hidden);
+    workCount.textContent = `${visibleCards.length} projects`;
+    if (reducedMotion.matches) return;
+
+    let delay = 0;
+    for (const card of visibleCards) {
+      const { top, bottom, left, height } = card.getBoundingClientRect();
+      if (top >= window.innerHeight || bottom <= 0) continue;
+
+      reveal?.unobserve(card);
+      const previous = previousPositions.get(card);
+      if (previous && Math.abs(previous.top - top) < height) {
+        animateEntrance(card, delay, previous.left - left, previous.top - top);
+      } else {
+        animateEntrance(card, delay);
+      }
+      delay = Math.min(delay + 45, 135);
+    }
   });
 });
 
@@ -197,8 +297,14 @@ document.querySelectorAll("[data-project]").forEach((button) => {
     );
     const link = document.querySelector("#dialog-link");
     link.hidden = !project.url;
-    if (project.url) link.href = project.url;
-    else link.removeAttribute("href");
+    if (project.url) {
+      link.href = project.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    } else {
+      for (const attribute of ["href", "target", "rel"])
+        link.removeAttribute(attribute);
+    }
     dialog.showModal();
     document.body.classList.add("dialog-open");
     dialog.scrollTop = 0;
@@ -218,7 +324,10 @@ dialog.addEventListener("close", () => {
 document.querySelector(".dialog-contact").addEventListener("click", () => {
   projectTrigger = null;
   dialog.close();
-  document.querySelector("#contact-form input").focus({ preventScroll: true });
+  // Let the anchor navigate before moving focus into the form.
+  requestAnimationFrame(() =>
+    document.querySelector("#contact-form input").focus(),
+  );
 });
 
 document.querySelector("#year").textContent = new Date().getFullYear();
